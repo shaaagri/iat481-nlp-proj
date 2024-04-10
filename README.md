@@ -3,5 +3,5 @@ RAG-based chatbot that helps you to sleep better, be healthier and more producti
 
 Team members:
 
-Sorren Jao
-Grigory Gogin
+- Sorren Jao
+- Grigory Gogin

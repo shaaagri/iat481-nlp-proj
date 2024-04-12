@@ -1,0 +1,117 @@
+Course Name: 
+Exploring Artificial Intelligence: Its Use, Concepts, and Impact
+
+Course Description:
+
+This course is cross-listed as IAT481 (undergraduate) / IAT885 (graduate).
+
+This course is designed to provide a comprehensive and accessible introduction to the world of artificial intelligence that will empower the students to navigate the AI-driven future. Students will explore fundamental AI concepts, including machine learning, neural networks, natural language processing, and computer vision; discover real-world applications, ethical considerations, and the societal impact of AI. 
+
+ 
+Course Info:
+
+Course will be held between Jan 8 – Apr 12, 2024: Thu, 12:30–2:20 p.m. @ SRYC3170 . Tutorial sessions will be held weekly after the course @ SRYC3050
+
+Instructor: Dr. O. Nilay Yalcin oyalcin@sfu.ca , Office Hours: Wednesdays 12:30 – 2:30pm @SRYC 2282 (by email appointment only, contact at least 1 day before)​
+
+TA: Maryiam Zahoor maryiam_zahoor@sfu.ca, Office Hours: Wednesdays SRYC 3120, 11am-12pm
+
+Consider e-mail etiquette,  http://www.albion.com/netiquette/corerules.html when sending an email to us. 
+To promote understanding with your reader:
+
+    Write a clear subject line that shows your section number and the purpose of the email. Include course number in email subject: "IAT 418/885: .... ". Thanks!
+
+    Identify your audience by name (i.e Hi Nilay or Hello Maryiam)
+
+    Compose a direct, concise message with a clear purpose (i.e I have a question about today’s activity or I will not be in class next week.)
+
+    Proofread and use appropriate language for the context of your message--friendly and professional. 
+
+    Close with your name and student number (i.e Regards, Brenda Sans (301001010))
+
+Email Protocols
+
+    Your Instructor and TA will reply to e-mails within 24 hours during weekdays.
+
+    We do not answer emails after 5pm, or on weekends and holidays.
+
+    Requests for grade changes and extensions must be sent directly to the course Instructor.
+
+Students are required to check SFU email regularly to stay updated on course, school and university related communications. This is part of being a university citizen.
+
+ 
+Text, Resources, Materials:
+
+There is no mandatory textbook for this course. Any readings and materials will be provided online. 
+
+Suggested Textbook (Not required to purchase - 3d edition online - 4th edition is newest):
+
+Artificial Intelligence: A Modern Approach (AIMA) by Russell & Norvig, which is accessible online
+
+Links to an external site. and at SFU library.
+
+ 
+Assignments & Grading:
+
+As noted in the Assignments section of Canvas, there are:
+
+    Course & tutorial participation 5% 
+    Three course-check up assignments & quick course surveys 3%. 
+    Three individual written reports or discussions on course concepts, worth 12%:
+        Asynchronous written assignments and can be completed anytime before the due date.
+        Discussion 1: What is intelligence? (4%)
+        Report 1: AI Agent Assignment (4%)
+        Report 2: AI Models Assignment (4%)
+    Individual coding assignments, worth 20% :
+        Assignment 1 - Basics and introduction follow-along (5%)
+        Assignment 2 - Data Analysis assignment (5%)
+        Assignment 3 - Classical Machine learning methods assignment (5%)
+        Assignment 4 - Neural Networks assignment (5%)
+        Students will be asked to provide reports of the assignments, along with the code in github. 
+    Two mini-projects (in max groups of 2 for undergrads), worth 40%: 
+        Mini-project 1: Computer Vision / Image Processing (20%)
+        Mini-project 2: Natural Language Processing (20%) . Mini-Project 2 will be allowed to be done as a report or coding assignment, depending on the student preference. Reports have to be submitted as an individual assignment.
+    Two quizzes that will be held during lectures, each worth 10%, totaling 20%. The quizzes will be multiple choice and fill in the blank questions from the notes. It is not a test with or on computer programming. 
+
+Grace Days. You are allowed 2 grace days to use in case you would like to submit an assignment late. These can only be applied to Assignment 1, 2, 3, or 4 and not the mini-projects or written assignments. To use a grace day, please note it at the top of any late submitted assignment and comment in Canvas, along with your remaining days, e.g. "I would like to use 1 grace day for this assignment. I have 1 left." Grace days cannot be combined with Late Policy.
+
+Late Policy. Your instructor and TAs try to return writing assignments in a timely manner. If students don't prepare for lab or hand in assignments on time, this impacts our ability to assess and return student work. 
+
+To support fairness and effective grading, students who submit their mini-projects, reports or assignments on CANVAS without a valid reason will receive an automatic deduction: 
+
+        10% deduction for 12h late
+        20% deduction for 1 day late
+        50% deduction for 2 days late
+
+Assignments submitted 3-5 days late will receive written feedback and a zero grade.
+
+Assignments submitted more than 5 days late will not receive any feedback and get a zero grade. Late policy cannot be combined with grace days.
+
+ 
+Optional Credits: 
+
+You can earn up to 2% credits for research participation through SONA system : https://sfu-siat.sona-systems.com/Links to an external site.
+
+Grading Practices:
+http://www.sfu.ca/policies/teaching/t20-01.htm
+Your assignments may be checked for plagiarism through SFU Turnitin.com account. By registering for this course, you are given your consent for the instructors to check the originality of your work, if necessary, through the Turnitin services to protect the integrity of SFU academic programs and in accordance with SFU recommendations. 
+If you have any questions about this code or about plagiarism or academic dishonesty in general, please contact me.  Keeping with SFU Policy, audio and/or video recording in class is not allowed without the consent of the instructor.
+
+ 
+Academic Integrity: 
+Academic honesty is essential for maintaining a high standard of academic excellence and integrity. There are many different forms of academic dishonesty. These include plagiarism such as inadequately citing the source of short phrases or ideas of an author in written work submitted for a grade and submitting or presenting another’s work as one’s own, among others.
+
+Students should read SFU’s policy S10.01 on Code of Academic Integrity and Good Conduct at:
+http://www.sfu.ca/policies/gazette/student/s10-01.html which outlines all prohibited acts of academic dishonesty.
+
+Use of Assistive Technologies:
+
+If you’re using any assistive technology to produce content that will be a part of your graded work in the course, you must be transparent about the tools that you use and cite them. Undeclared use of the tools/technologies will be considered a violation of the academic integrity policy!
+
+    For example, if you use ChatGPT to assist you in your submission, you must acknowledge the use of software (cite the website/version) and document the use of the prompts used to generate the results. You need to share this documentation with your submission.
+    You’re also responsible to evaluate the output for inaccuracies and make the proper corrections!
+
+ 
+Accessibility and Accommodation:
+
+Students with hidden or visible disabilities who may need classroom or exam accommodations are encouraged to register with the SFU Centre for Accessible Learning (CAL- 1250 Maggie Benston Centre) as soon as possible to ensure that they are eligible and that approved accommodations and services are implemented in a timely fashion. You can contact the instructor with any questions you might have. 

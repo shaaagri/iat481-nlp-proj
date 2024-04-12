@@ -1,5 +1,6 @@
 # iat481-nlp-proj
-RAG-based chatbot that helps you to sleep better, be healthier and more productive (at least, that is the idea)
+IAT481 Exploring Artificial Intelligence: Its Use, Concepts, and Impact
+Final Project
 
 **Team members**:
 

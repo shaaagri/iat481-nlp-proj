@@ -1,6 +1,7 @@
 # Refer to https://github.com/shaaagri/iat481-nlp-proj/blob/main/Llama2_RAG_bot.ipynb notebook where
 # we went over our code in detail
 
+import sys, os
 import yaml
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
@@ -10,6 +11,7 @@ from langchain_community.llms import LlamaCpp
 from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import TextLoader
+from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain.globals import set_debug
 
@@ -67,13 +69,51 @@ def init_llama():
     set_debug(config['debug']) 
 
 
+def vectorize_file(file_path):
+    # Code based on examples from the LangChain documentation: 
+    # https://python.langchain.com/docs/integrations/vectorstores/chroma/
+
+    file_ext = os.path.splitext(file_path)
+
+    if file_ext[1] == '.csv':
+        loader = CSVLoader(file_path)
+    else:
+        loader = TextLoader(file_path)
+
+    documents = loader.load()
+
+    # split it into chunks
+    text_splitter = CharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
+    docs = text_splitter.split_documents(documents)
+        
+    try:
+        clear_chroma_db(db)  # Empty the database (this line is ignored if it's not been initialized yet)
+    except NameError:
+        pass
+    db = Chroma.from_documents(docs, embedding_function)
+
+    # query it
+    query = "What is the best sleep schedule?"
+    docs = db.similarity_search(query)
+
+    # print results
+    print(docs[0].page_content)
+
+
+def clear_chroma_db(db):
+    if db is None:
+        return
+    
+    try:
+        db.delete_collection()
+    except:
+        pass
+
+
 def main():
-    load_config()
+   
     load_model(config['model_name_or_path'], config['model_basename'])
     init_llama()
-
-    embedding_function = SentenceTransformerEmbeddings(model_name=config['embedding_model'])
-
     
     question='Describe the main campus of the Simon Fraser University'
 
@@ -82,6 +122,14 @@ def main():
     print("yo")
 
 
+load_config()
+embedding_function = SentenceTransformerEmbeddings(model_name=config['embedding_model'])
+
 if __name__ == "__main__":
-    main()
+    import sys
+
+    if sys.argv[1].lower() == 'vectorize':
+        vectorize_file(sys.argv[2])
+
+    #main()
 

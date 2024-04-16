@@ -7,6 +7,7 @@ from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from langchain_core.callbacks import CallbackManager, StreamingStdOutCallbackHandler
 from langchain_core.prompts import PromptTemplate
+from langchain.chains import RetrievalQA
 from langchain_community.llms import LlamaCpp
 from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain_community.vectorstores import Chroma
@@ -66,7 +67,11 @@ def init_llama():
         verbose=True,  # Verbose is required to pass to the callback manager
     )  
 
-    set_debug(config['debug']) 
+    set_debug(config['debug'])
+
+
+def load_db():
+    return Chroma(persist_directory="./chroma_db", embedding_function=embedding_function)
 
 
 def vectorize_file(file_path):
@@ -90,14 +95,7 @@ def vectorize_file(file_path):
         clear_chroma_db(db)  # Empty the database (this line is ignored if it's not been initialized yet)
     except NameError:
         pass
-    db = Chroma.from_documents(docs, embedding_function)
-
-    # query it
-    query = "What is the best sleep schedule?"
-    docs = db.similarity_search(query)
-
-    # print results
-    print(docs[0].page_content)
+    db = Chroma.from_documents(docs, embedding_function, persist_directory="./chroma_db")
 
 
 def clear_chroma_db(db):
@@ -111,13 +109,22 @@ def clear_chroma_db(db):
 
 
 def main():
-   
     load_model(config['model_name_or_path'], config['model_basename'])
     init_llama()
-    
-    question='Describe the main campus of the Simon Fraser University'
+    db = load_db()
 
-    llm.invoke(prompt.format(question=question, context=''))
+    qa_chain = RetrievalQA.from_chain_type(
+        llm,
+
+        # When choosing the top_k we try to pick only the most relevant Q&A pairs.
+        # Our dataset is small so that should suffice and we won't bloat the prompt
+        retriever=db.as_retriever(search_kwargs={"k": 1}),
+        chain_type_kwargs={"prompt": prompt}
+    )
+    
+    question = "Tell me some tips for the best sleep schedule"
+
+    qa_chain.invoke(question)
 
     print("yo")
 
@@ -128,8 +135,9 @@ embedding_function = SentenceTransformerEmbeddings(model_name=config['embedding_
 if __name__ == "__main__":
     import sys
 
-    if sys.argv[1].lower() == 'vectorize':
-        vectorize_file(sys.argv[2])
+    if len(sys.argv) > 1:
+        if sys.argv[1].lower() == 'vectorize':
+            vectorize_file(sys.argv[2])
 
-    #main()
+    main()
 

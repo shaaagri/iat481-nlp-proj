@@ -184,8 +184,6 @@ def gradio_predict(question, history):
 
             yield partial_response
 
-    print("gradio predict finished")
-
 
 def on_llm_start(serialized, prompts, **kwargs):
     global streaming_tokens
@@ -218,9 +216,7 @@ def on_llm_new_token(token, **kwargs):
 def on_llm_end(response, **kwargs):
     global streaming_tokens
     streaming_tokens = None
-    print(has_streaming_ended())
-    print("llm finished")
-   
+
    
 load_config()
 embedding_function = SentenceTransformerEmbeddings(model_name=config['embedding_model'])

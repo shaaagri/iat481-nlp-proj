@@ -19,7 +19,13 @@ from langchain.globals import set_debug
 
 prompt_template="""[INST]
 <<SYS>>
-You are helpful, respectful, caring and honest assistant for question-answering tasks. You do not have expressions or emotions. You are objective and provide everything that is helpful to know given the question, but you are not chatty, be concise and do not use more than three sentences. Use the following pieces of retrieved context to answer the question to the best of your ability. If you don't know the answer, just say that you don't know.
+You are helpful, respectful, caring and honest assistant for question-answering tasks.
+You do not have expressions or emotions.
+You are objective and provide everything that is helpful to know given the question, but you are not chatty.
+Be concise and do not use more than five sentences.
+Use the following pieces of retrieved context without relying on your own knowledge to answer the question to the best of your ability
+If you don't know the answer, just say that you don't know.
+Finish your response with a cheerful or optimistic saying for the user and ask them whether they need more help.
 <</SYS>>
 
 USER: {question}
@@ -85,17 +91,23 @@ def vectorize_file(file_path):
     else:
         loader = TextLoader(file_path)
 
+    print("Ingesting the knowledge data...")
     documents = loader.load()
 
     # split it into chunks
     text_splitter = CharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
     docs = text_splitter.split_documents(documents)
-        
+    print(f'{len(docs)} chunks have been created\n')    
+
+    print("Saving chunks to the vector store...")
+
     try:
         clear_chroma_db(db)  # Empty the database (this line is ignored if it's not been initialized yet)
     except NameError:
         pass
+
     db = Chroma.from_documents(docs, embedding_function, persist_directory="./chroma_db")
+    print(f'{db._collection.count()} vectors have been added to the store')
 
 
 def clear_chroma_db(db):
@@ -122,13 +134,12 @@ def main():
         chain_type_kwargs={"prompt": prompt}
     )
     
-    question = "Tell me some tips for the best sleep schedule"
+    question = input("\n\nEnter your question for the sleep assistant (leave it blank to cancel): ")
+    
+    if question:
+         qa_chain.invoke(question)
 
-    qa_chain.invoke(question)
-
-    print("yo")
-
-
+   
 load_config()
 embedding_function = SentenceTransformerEmbeddings(model_name=config['embedding_model'])
 
@@ -138,6 +149,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         if sys.argv[1].lower() == 'vectorize':
             vectorize_file(sys.argv[2])
+            sys.exit(0) 
 
     main()
 

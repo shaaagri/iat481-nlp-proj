@@ -3,6 +3,7 @@
 
 import sys, os
 import yaml
+from queue import Queue
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from langchain_core.callbacks import CallbackManager, StreamingStdOutCallbackHandler
@@ -15,6 +16,7 @@ from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain.globals import set_debug
+import gradio as gr
 
 
 prompt_template="""[INST]
@@ -49,14 +51,28 @@ def load_model(model_name_or_path, model_basename):
     # Downloads Llama-2 upon accessing it for the first time. Otherwise, loads it from cache
     model_path = hf_hub_download(repo_id=model_name_or_path, filename=model_basename)
 
+
+def init_app():
+    global db
+    load_model(config['model_name_or_path'], config['model_basename'])
+    init_llama()
+    db = load_db()
+
   
-def init_llama():
+def init_llama(web_mode=False):
     global prompt, llm
 
     prompt = PromptTemplate.from_template(prompt_template)
 
     # Callbacks support token-wise streaming
-    callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+    streaming_handler = StreamingStdOutCallbackHandler()
+
+    if web_mode:
+        streaming_handler.on_llm_start = on_llm_start
+        streaming_handler.on_llm_new_token = on_llm_new_token
+        streaming_handler.on_llm_end = on_llm_end
+
+    callback_manager = CallbackManager([streaming_handler])
 
     llm = LlamaCpp(
         # Make sure the model path is correct for your system!
@@ -121,9 +137,7 @@ def clear_chroma_db(db):
 
 
 def main():
-    load_model(config['model_name_or_path'], config['model_basename'])
-    init_llama()
-    db = load_db()
+    init_app()
 
     qa_chain = RetrievalQA.from_chain_type(
         llm,
@@ -137,8 +151,34 @@ def main():
     question = input("\n\nEnter your question for the sleep assistant (leave it blank to cancel): ")
     
     if question:
-         qa_chain.invoke(question)
+        qa_chain.invoke(question)
 
+
+def gradio_predict(message, history):
+    qa_chain = RetrievalQA.from_chain_type(
+        llm,
+
+        # When choosing the top_k we try to pick only the most relevant Q&A pairs.
+        # Our dataset is small so that should suffice and we won't bloat the prompt
+        retriever=db.as_retriever(search_kwargs={"k": 1}),
+        chain_type_kwargs={"prompt": prompt}
+    )
+
+    print("smth is happening")
+
+
+def on_llm_start(serialized, prompts, **kwargs):
+    global streaming_tokens
+    streaming_tokens = Queue(maxsize = 1024)
+
+
+def on_llm_new_token(token, **kwargs):
+    print(f'yo: {token}')
+
+
+def on_llm_end(response, **kwargs):
+    pass
+   
    
 load_config()
 embedding_function = SentenceTransformerEmbeddings(model_name=config['embedding_model'])
@@ -149,7 +189,11 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         if sys.argv[1].lower() == 'vectorize':
             vectorize_file(sys.argv[2])
+            sys.exit(0)
+
+        if sys.argv[1].lower() == 'webui':
+            init_app()
+            gr.ChatInterface(gradio_predict).launch()
             sys.exit(0) 
 
     main()
-

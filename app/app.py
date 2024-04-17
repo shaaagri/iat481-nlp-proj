@@ -4,6 +4,8 @@
 import sys, os
 import yaml
 from queue import Queue
+import threading
+from waiting import wait, ANY, ALL
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from langchain_core.callbacks import CallbackManager, StreamingStdOutCallbackHandler
@@ -18,6 +20,8 @@ from langchain_text_splitters import CharacterTextSplitter
 from langchain.globals import set_debug
 import gradio as gr
 
+
+streaming_tokens = None
 
 prompt_template="""[INST]
 <<SYS>>
@@ -52,10 +56,10 @@ def load_model(model_name_or_path, model_basename):
     model_path = hf_hub_download(repo_id=model_name_or_path, filename=model_basename)
 
 
-def init_app():
+def init_app(web_mode=False):
     global db
     load_model(config['model_name_or_path'], config['model_basename'])
-    init_llama()
+    init_llama(web_mode)
     db = load_db()
 
   
@@ -154,7 +158,7 @@ def main():
         qa_chain.invoke(question)
 
 
-def gradio_predict(message, history):
+def gradio_predict(question, history):
     qa_chain = RetrievalQA.from_chain_type(
         llm,
 
@@ -164,7 +168,23 @@ def gradio_predict(message, history):
         chain_type_kwargs={"prompt": prompt}
     )
 
-    print("smth is happening")
+    llm_thread = threading.Thread(target=lambda: qa_chain.invoke(question)).start()
+
+    wait(lambda: has_streaming_started(), timeout_seconds=30, sleep_seconds=0.25)
+    
+    partial_response = ""
+
+    while streaming_tokens is not None:
+        wait(ANY([lambda: is_token_queue_not_empty(), lambda: has_streaming_ended()]), timeout_seconds=30, sleep_seconds=0.1)
+
+        if streaming_tokens is not None:
+            for i in range(0, streaming_tokens.qsize()):
+                next_token = streaming_tokens.get()
+                partial_response += next_token
+
+            yield partial_response
+
+    print("gradio predict finished")
 
 
 def on_llm_start(serialized, prompts, **kwargs):
@@ -172,12 +192,34 @@ def on_llm_start(serialized, prompts, **kwargs):
     streaming_tokens = Queue(maxsize = 1024)
 
 
+def has_streaming_started():
+    global streaming_tokens
+    return streaming_tokens is not None
+
+
+def has_streaming_ended():
+    global streaming_tokens
+    return streaming_tokens is None
+
+
+def is_token_queue_not_empty():
+    global streaming_tokens
+    if streaming_tokens is None:
+        return False
+
+    return streaming_tokens.qsize() > 0
+
+
 def on_llm_new_token(token, **kwargs):
-    print(f'yo: {token}')
+    global streaming_tokens
+    streaming_tokens.put(token)
 
 
 def on_llm_end(response, **kwargs):
-    pass
+    global streaming_tokens
+    streaming_tokens = None
+    print(has_streaming_ended())
+    print("llm finished")
    
    
 load_config()
@@ -192,7 +234,7 @@ if __name__ == "__main__":
             sys.exit(0)
 
         if sys.argv[1].lower() == 'webui':
-            init_app()
+            init_app(web_mode=True)
             gr.ChatInterface(gradio_predict).launch()
             sys.exit(0) 
 

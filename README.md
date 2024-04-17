@@ -7,3 +7,12 @@ Final Project
 
 - Sorren Jao
 - Grigory Gogin
+
+
+**System Requirements**:
+- Python 3.12
+
+
+**Quick Start**:
+- To set up the application on a new machine, execute `prepare.bat` (Windows) and wait till it completes its job (can take up a long time due to a large number of dependencies needed to be installed).
+- Execute `run.bat` (Windows) to launch the chatbot (the very first launch will take longer as it will download a variant of Llama-2 first)

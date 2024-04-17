@@ -5,6 +5,7 @@ import sys, os
 import yaml
 from queue import Queue
 import threading
+import webbrowser
 from waiting import wait, ANY, ALL
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
@@ -217,7 +218,7 @@ def on_llm_end(response, **kwargs):
     global streaming_tokens
     streaming_tokens = None
 
-   
+
 load_config()
 embedding_function = SentenceTransformerEmbeddings(model_name=config['embedding_model'])
 
@@ -231,7 +232,15 @@ if __name__ == "__main__":
 
         if sys.argv[1].lower() == 'webui':
             init_app(web_mode=True)
-            gr.ChatInterface(gradio_predict).launch()
+
+            js = '''
+            
+            console.log('yo');
+            '''
+
+            demo = gr.ChatInterface(fn=gradio_predict, js=js)
+            demo.launch(inbrowser=True, server_name=config['server_name'], server_port=config['server_port'])
+            
             sys.exit(0) 
 
     main()

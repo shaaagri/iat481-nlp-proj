@@ -1,3 +1,3 @@
-.\.venv\Scripts\python app.py webui
+.venv\Scripts\python app.py webui
 pause
 

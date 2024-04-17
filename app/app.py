@@ -164,7 +164,7 @@ def gradio_predict(question, history):
         llm,
 
         # When choosing the top_k we try to pick only the most relevant Q&A pairs.
-        # Our dataset is small so that should suffice and we won't bloat the prompt
+        # Our dataset is small so a small k should suffice and we won't bloat the prompt
         retriever=db.as_retriever(search_kwargs={"k": 1}),
         chain_type_kwargs={"prompt": prompt}
     )
@@ -232,13 +232,9 @@ if __name__ == "__main__":
 
         if sys.argv[1].lower() == 'webui':
             init_app(web_mode=True)
-
-            js = '''
             
-            console.log('yo');
-            '''
-
-            demo = gr.ChatInterface(fn=gradio_predict, js=js)
+            #'finlaymacklon/boxy_violet'
+            demo = gr.ChatInterface(fn=gradio_predict, theme='abidlabs/dracula_revamped')
             demo.launch(inbrowser=True, server_name=config['server_name'], server_port=config['server_port'])
             
             sys.exit(0) 

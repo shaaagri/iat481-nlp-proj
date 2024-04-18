@@ -108,9 +108,9 @@ def vectorize_file(file_path):
     file_ext = os.path.splitext(file_path)
 
     if file_ext[1] == '.csv':
-        loader = CSVLoader(file_path)
+        loader = CSVLoader(file_path, encoding='utf8')
     else:
-        loader = TextLoader(file_path)
+        loader = TextLoader(file_path, encoding='utf8')
 
     print("Ingesting the knowledge data...")
     documents = loader.load()
@@ -233,8 +233,8 @@ if __name__ == "__main__":
         if sys.argv[1].lower() == 'webui':
             init_app(web_mode=True)
             
-            #'finlaymacklon/boxy_violet'
-            demo = gr.ChatInterface(fn=gradio_predict, theme='abidlabs/dracula_revamped')
+            chatbot = gr.Chatbot(label="BetterSleep", height='70vh')
+            demo = gr.ChatInterface(fn=gradio_predict, chatbot=chatbot, theme='abidlabs/dracula_revamped', css=".gradio-container { max-width: 1024px !important; }")
             demo.launch(inbrowser=True, server_name=config['server_name'], server_port=config['server_port'])
             
             sys.exit(0) 

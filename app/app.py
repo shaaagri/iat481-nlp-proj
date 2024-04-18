@@ -149,7 +149,7 @@ def main():
 
         # When choosing the top_k we try to pick only the most relevant Q&A pairs.
         # Our dataset is small so that should suffice and we won't bloat the prompt
-        retriever=db.as_retriever(search_kwargs={"k": 1}),
+        retriever=db.as_retriever(search_kwargs={"k": config['top_k']}),
         chain_type_kwargs={"prompt": prompt}
     )
     
@@ -165,18 +165,18 @@ def gradio_predict(question, history):
 
         # When choosing the top_k we try to pick only the most relevant Q&A pairs.
         # Our dataset is small so a small k should suffice and we won't bloat the prompt
-        retriever=db.as_retriever(search_kwargs={"k": 1}),
+        retriever=db.as_retriever(search_kwargs={"k": config['top_k']}),
         chain_type_kwargs={"prompt": prompt}
     )
 
     llm_thread = threading.Thread(target=lambda: qa_chain.invoke(question)).start()
 
-    wait(lambda: has_streaming_started(), timeout_seconds=30, sleep_seconds=0.25)
+    wait(lambda: has_streaming_started(), timeout_seconds=120, sleep_seconds=0.25)
     
     partial_response = ""
 
     while streaming_tokens is not None:
-        wait(ANY([lambda: is_token_queue_not_empty(), lambda: has_streaming_ended()]), timeout_seconds=30, sleep_seconds=0.1)
+        wait(ANY([lambda: is_token_queue_not_empty(), lambda: has_streaming_ended()]), timeout_seconds=45, sleep_seconds=0.1)
 
         if streaming_tokens is not None:
             for i in range(0, streaming_tokens.qsize()):

@@ -84,12 +84,12 @@ def init_llama(web_mode=False):
         # Make sure the model path is correct for your system!
         model_path=model_path,
         
-        temperature=0.5,
+        temperature=0.6,
         n_gpu_layers=-1,  # -1 stands for offloading all layers of the model to GPU => better performance (we've got enough VRAM)
         n_ctx=4096,  # IMPORTANT for RAG. the default for quantized GGUF models is only 512
         max_tokens=1024,
         repeat_penalty=1.02,
-        top_p=0.85, # nucleus sampling
+        top_p=0.8, # nucleus sampling
         top_k=150,  # sample from k top tokens 
         callback_manager=callback_manager,
         verbose=True,  # Verbose is required to pass to the callback manager
@@ -152,7 +152,7 @@ def main():
         # Our dataset is small so that should suffice and we won't bloat the prompt
         retriever=db.as_retriever(
             search_type="mmr",
-            search_kwargs={'k': config['top_k']}
+            search_kwargs={"k": config['top_k']}
         ),
         chain_type_kwargs={"prompt": prompt}
     )

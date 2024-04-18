@@ -32,6 +32,7 @@ You are objective and provide everything that is helpful to know given the quest
 Be concise and do not use more than five sentences.
 Use the following pieces of retrieved context without relying on your own knowledge to answer the question to the best of your ability
 If you don't know the answer, just say that you don't know.
+If user's input does not look like a question just respond something relevant.
 Finish your response with a cheerful or optimistic saying for the user and ask them whether they need more help.
 <</SYS>>
 
@@ -83,12 +84,12 @@ def init_llama(web_mode=False):
         # Make sure the model path is correct for your system!
         model_path=model_path,
         
-        temperature=0.6,
+        temperature=0.5,
         n_gpu_layers=-1,  # -1 stands for offloading all layers of the model to GPU => better performance (we've got enough VRAM)
         n_ctx=4096,  # IMPORTANT for RAG. the default for quantized GGUF models is only 512
         max_tokens=1024,
         repeat_penalty=1.02,
-        top_p=0.8, # nucleus sampling
+        top_p=0.85, # nucleus sampling
         top_k=150,  # sample from k top tokens 
         callback_manager=callback_manager,
         verbose=True,  # Verbose is required to pass to the callback manager
@@ -149,7 +150,10 @@ def main():
 
         # When choosing the top_k we try to pick only the most relevant Q&A pairs.
         # Our dataset is small so that should suffice and we won't bloat the prompt
-        retriever=db.as_retriever(search_kwargs={"k": config['top_k']}),
+        retriever=db.as_retriever(
+            search_type="mmr",
+            search_kwargs={'k': config['top_k']}
+        ),
         chain_type_kwargs={"prompt": prompt}
     )
     
@@ -165,7 +169,10 @@ def gradio_predict(question, history):
 
         # When choosing the top_k we try to pick only the most relevant Q&A pairs.
         # Our dataset is small so a small k should suffice and we won't bloat the prompt
-        retriever=db.as_retriever(search_kwargs={"k": config['top_k']}),
+        retriever=db.as_retriever(
+            search_type="mmr",
+            search_kwargs={'k': config['top_k']}
+        ),
         chain_type_kwargs={"prompt": prompt}
     )
 
@@ -233,7 +240,7 @@ if __name__ == "__main__":
         if sys.argv[1].lower() == 'webui':
             init_app(web_mode=True)
             
-            chatbot = gr.Chatbot(label="BetterSleep", height='70vh')
+            chatbot = gr.Chatbot(label="BetterSleep", height='75vh')
             demo = gr.ChatInterface(fn=gradio_predict, chatbot=chatbot, theme='abidlabs/dracula_revamped', css=".gradio-container { max-width: 1024px !important; }")
             demo.launch(inbrowser=True, server_name=config['server_name'], server_port=config['server_port'])
             
